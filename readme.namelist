@@ -1,0 +1,335 @@
+
+                                   +++++++++++++++++++++++++++++++
+                                   ++++ NAMELIST for MVIETool ++++
+                                   +++++++++++++++++++++++++++++++
++ Please comment the argument that is not assigned, otherwise MVIETool will report error !!!
+
+& Calculate_MVIE                                                              
+|==========================================================================================================|
+| Name               | Type              | Discription                                                     |
+|==========================================================================================================|
+|==== Arguments for input and output data =================================================================|
+|==========================================================================================================|
+| Inputdatadir       | a string          | Model and observation data input directory                      | 
+|--------------------|-------------------|-----------------------------------------------------------------| 
+| Model_filenames    | array of str      | Names of model datafiles for evaluation                         |
+|--------------------|-------------------|-----------------------------------------------------------------|
+| Obs_filenames      | array of str      | Names of observation/reanalysis datafiles for evaluation        |
+|--------------------|-------------------|-----------------------------------------------------------------| 
+| Varname            | a string          | Names of independent variables stroed in the data file.         |
+|                    |                   | Names of vars belonging to the same individual vector variable  | 
+|                    |                   | need to be written together and enclosed in parentheses.        | 
+|                    |                   | e.g.: "var1,var2,(var3,var4),var5,(var6,var7,var8)"             | 
+|--------------------|-------------------|-----------------------------------------------------------------|
+| MVIE_filename      | a string          | Output filename, **default: "MVIE_stats.nc"                     |
+|==========================================================================================================|
+|==== Arguments for data coordinates information ==========================================================|
+|==========================================================================================================|
+| Var_Coords         | True / False      | Evaluating data in a specified region [True] or the whole region|
+|                    |                   | [False: **default]. If set to False, each variable in all       |
+|                    |                   | datafiles should have the same dimsizes.                        |                                                    
+|--------------------|-------------------|-----------------------------------------------------------------|
+| isCoords_time      | True / False      | Variable has a time coordinate [True] or not [False: **default]?| 
+|                    |                   |== valid under 'Var_Coords = True' ==============================| 
+|--------------------|-------------------|-----------------------------------------------------------------| 
+| Coords_time        | a string          | Name of time coordinate, **default: "time"                      | 
+|                    |                   |== valid under 'isCoords_time = True' ===========================| 
+|--------------------|-------------------|-----------------------------------------------------------------| 
+| Range_time         | array of a str / 2| Range of time coordinate                                        |
+|                    | numeric values    |[1] str with format as: 'YYYYMM','YYYYMMDD',or 'YYYYMMDDHH'      |
+|                    |                   |[2] numeric: range of values in time coordinae                   |
+|                    |                   |== valid under 'isCoords_time = True' ===========================| 
+|--------------------|-------------------|-----------------------------------------------------------------|
+| isCoords_geo       | True / False      | Variable has latitude or/and longitude coordinates [True] or not|
+|                    |                   | [False: **default]?                                             |
+|                    |                   |== valid under 'Var_Coords = True' ==============================| 
+|--------------------|-------------------|-----------------------------------------------------------------|
+| Coords_geo         | array of K str    | Names of latitude or(and) longitude coordinates,                |
+|                    | (K is up to 2)    |== valid under 'isCoords_geo = True' ============================|                 
+|--------------------|-------------------|-----------------------------------------------------------------|
+| Range_geo          | array of K str    | Specify subregion to be evaluated, and match 'Coords_geo'       |
+|                    | (K is up to 2)    | e.g.: (/"lat|0.:45","lon|0:180","lev|850:850"/)                 |
+|                    |                   |== valid under 'isCoords_geo = True' ============================| 
+|--------------------|-------------------|-----------------------------------------------------------------|
+| hasLevel           | False / a string  | Variable has level coordinates [name of level coordinate, e.g.: | 
+|                    |                   | "lev"] or not [False: **default]? Level coordinate is required  |
+|                    |                   | to read data at specific level.                                 |
+|                    |                   |== valid under 'Var_Coords = True' ==============================|  
+|--------------------|-------------------|-----------------------------------------------------------------|
+| VarLev             | array of str      | Specify level for each variable to be evaluated. If a variable  |   
+|                    |                   | does not have the level coordinate, users can provide an        |
+|                    |                   | arbitrary value in the corresponding position to match the      |
+|                    |                   | variable in Varname. e.g.:(/0,0,850,850,700,200,200,200/)       |
+|                    |                   |== valid under setting 'hasLevel' with level coord name =========| 
+|==========================================================================================================|
+|====  Arguments for area weight and variable weight ======================================================|
+|==========================================================================================================|                  
+| Isarea_wgt         | False / a string  | Considering area weighting,e.g.:"lat", or not [**default: False]|
+|                    | of lat coordinate | in the statistics                                               |
+|                    |                   | == valid under 'isCoords_geo = True' ===========================|
+|--------------------|-------------------|-----------------------------------------------------------------|
+| Wgt_var            | 1 / array of      | Variable Weighting, if use, set the list of weighting for the   |  
+|                    | numeric values    | corresponding variables listed in "Varname". Note that variables|
+|                    |                   | enclosed in parentheses should have the same weight. e.g.:(/1,2,|           |
+|                    |                   | 3,3,4,2,2,2/). **default: 1 - no weight                                        |
+|--------------------|-------------------|-----------------------------------------------------------------| 
+| Typ_stat           | "float" / "double"| Type of calculated statistics (["float": **default]/"double")   |
+|--------------------|-------------------|-----------------------------------------------------------------| 
+| Stats_mode         | 0 / 1             | Mode of calculated statistics: centered (0) / uncentered (1),   |
+|                    |                   | **default: 0                                                    |
+|--------------------|-------------------|-----------------------------------------------------------------| 
+| Cal_VME            | 0 / 1             | Calculate VME(ME) (1) /MEVM (0) in centered mode, **default: 1  |
+|--------------------|-------------------|-----------------------------------------------------------------| 
+| MISS_F             | a numeric value   | Parameter F in MISS, **default: 2                               |
+|--------------------|-------------------|-----------------------------------------------------------------|
+| Print_stats_r      | True/False        | Print the range of statistics to screen, **default: True        |
+|--------------------|-------------------|-----------------------------------------------------------------| 
+
+& Plot_MVIE
+|==========================================================================================================|
+| Name               | Type              | Discription                                                     |
+|====================|===================|=================================================================|
+| Model_names        | array of strings  | Names for models                                                |
+|--------------------|-------------------|-----------------------------------------------------------------| 
+| Obs_names          | array of strings  | Names for observation/reanalysis data                           |
+|--------------------|-------------------|-----------------------------------------------------------------|
+| Plot_VFE_diagram   | True / False      | Whether to plot Taylor/VFE diagram                              |
+|--------------------|-------------------|-----------------------------------------------------------------|
+| Plot_metrics_table | True / False      | Whether to plot metrics table                                   |
+|==========================================================================================================|
+|===== Arguments for VFE diagram ==========================================================================|  
+|===== valid under 'Plot_VFE_diagram = True', if not plotting, user can comment codes =====================|
+|==========================================================================================================|                                                              |
+| MVIE_filename1     | a string          | Name of NetCDF file for VFE diagram from <calculate_MVIE.ncl>   |
+|--------------------|-------------------|-----------------------------------------------------------------|
+| stats_metrics1     | array of two str  | Stat names in 'MVIE_filename1' used for VFE diagram, two stats  |
+|                    |                   | are the ratio of the model field amplitude to obs, and          |
+|                    |                   | similarity coefficient of two fields. e.g.: (/"SD","CORR"/),(/  |
+|                    |                   | "rms","uCORR"/),(/"cRMSL","cVSC"/), [(/"RMSL","VSC"/):**default]|   
+|--------------------|-------------------|-----------------------------------------------------------------|
+| ivar               | integer           | If stat in 'stats_metrics1' is Ncase x Nvar, plot ivar-var for  |
+|                    |                   | VFE/Taylor diagram, **default: 0                                |
+|--------------------|-------------------|-----------------------------------------------------------------| 
+| filename_VFE       | a string          | File name of Taylor/VFE diagram, **default:"MVIE.diagram"       |
+|--------------------|-------------------|-----------------------------------------------------------------|
+| pltType_VFE        | a string          | Image storage format:"ps"/"eps"/"pdf"/"png", **default:"eps"    |
+|--------------------|-------------------|-----------------------------------------------------------------|
+| opt_VFE            | True / False      | Use VFE diagram attributes [True] or not [False: **default]?    |               |
+|                    |                   | *** Below arguments are valid under 'opt_VFE = True' ***********|
+|--------------------|-------------------|-----------------------------------------------------------------| 
+| opt_VFE@           | a string          | Diagram title, **default: not draw                              | 
+|        tiMainString|                   |                                                                 |
+|--------------------|-------------------|-----------------------------------------------------------------|
+| opt_VFE@           | a numeric value   | Font height of diagram title, **default: 0.0225                 |
+|   tiMainFontHeightF|                   |                                                                 |
+|--------------------|-------------------|-----------------------------------------------------------------|
+| opt_VFE@xyMax      | a numeric value   | Max value of axis, **have default                               |
+|--------------------|-------------------|-----------------------------------------------------------------|
+| opt_VFE            | a numeric value   | Font height for axis, **default: 0.0175                         |
+|      @xyFontHeightF|                   |                                                                 |
+|--------------------|-------------------|-----------------------------------------------------------------|
+| opt_VFE@OneX       | a string          | X-axis label at one point, **default: "REF"                     |
+|--------------------|-------------------|-----------------------------------------------------------------|
+| opt_VFE            | a string          | Y-axis string, **default: "RMSL"                                |
+|      @tiYAxisString|                   |                                                                 |
+|--------------------|-------------------|-----------------------------------------------------------------|
+| opt_VFE@CorLabel   | a string          | Arc label, **default: "Similarity"                              | 
+|--------------------|-------------------|-----------------------------------------------------------------|
+| opt_VFE@stnRad     | array of numeric  | Standard radius for RMSL, **default: not draw                   |
+|--------------------|-------------------|-----------------------------------------------------------------|
+| opt_VFE@ccRays     | array of numeric  | Radial lines for VSC, **default: not draw                       |
+|--------------------|-------------------|-----------------------------------------------------------------| 
+| opt_VFE@           | True / False      | Draw radii from REF [True] or not [False: **default]?           |
+|       centerDiffRMS|                   |                                                                 |
+|--------------------|-------------------|-----------------------------------------------------------------|
+| opt_VFE@Markers    | array of 2 values | Marker types for models and observations/reanalysis,            |
+|                    |                   | **default:(/4,8/)                                               |
+|--------------------|-------------------|-----------------------------------------------------------------|
+| opt_VFE@           | a numeric value   | Marker thinckness, **default: 1.0                               |
+|  gsMarkerThicknessF|                   |                                                                 |
+|--------------------|-------------------|-----------------------------------------------------------------| 
+| opt_VFE@           | a numeric value   | Marker size, **default: 0.0085                                  |
+|       gsMarkerSizeF|                   |                                                                 |
+|--------------------|-------------------|-----------------------------------------------------------------|
+| opt_VFE@Colors     | array of str / int| Colors of points, set to [1] array of str for named colors, [2] | 
+|                    | (N x 3)           | N x 3 RGB array with NhlTColorIndex, **have default             |
+|--------------------|-------------------|-----------------------------------------------------------------| 
+| opt_VFE@markerTxOn | True / False      | Add text for count of points [True: **default] or not [False]?  |
+|--------------------|-------------------|-----------------------------------------------------------------|
+| opt_VFE@           | a numeric value   | Textfont height for count of points, **default:0.0085           |
+|      ptxFontHeightF|                   | == valid under 'opt_VFE@markerTxOn = True' =====================|
+|--------------------|-------------------|-----------------------------------------------------------------|
+| opt_VFE@           | a numeric value   | X distance between point markers and point text, **default:0.015|
+|     markerTxXOffset|                   | == valid under 'opt_VFE@markerTxOn = True' =====================|
+|--------------------|-------------------|-----------------------------------------------------------------|
+| opt_VFE@           | a numeric value   | Y distance between point markers and point text, **default:0.015|
+|     markerTxYOffset|                   | == valid under 'opt_VFE@markerTxOn = True' =====================|
+|--------------------|-------------------|-----------------------------------------------------------------| 
+| plot_std_l         | a string / False  | Plot rms_std/SD_std line [name of stats in 'MVIE_filename1',    |
+|                    |                   | e.g.:"SD_std", "rms_std"] or not [False: **default]?            |
+|--------------------|-------------------|-----------------------------------------------------------------|
+| opt_VFE@           | True / False      | Draw data type labels [True] or not [False: **default\?         |
+|    DatatypeLabelsOn|                   |                                                                 |
+|--------------------|-------------------|-----------------------------------------------------------------|
+| opt_VFE@           | array of 2 str    | Labels of data type, **default:(/"Models","Renalysis"/)         |
+|      DatatypeLabels|                   | == valid under 'opt_VFE@DatatypeLabelsOn = True' ===============|
+|--------------------|-------------------|-----------------------------------------------------------------|
+| opt_VFE@DatatypeLab| a numeric value   | Data type labels font height, **default: 0.05                   | 
+|      elsFontHeightF|                   | == valid under 'opt_VFE@DatatypeLabelsOn = True' ===============| 
+|--------------------|-------------------|-----------------------------------------------------------------|
+| opt_VFE@           | a numeric value   | Width of data type labels, **default: 0.15                      | 
+| DatatypelegendWidth|                   | == valid under 'opt_VFE@DatatypeLabelsOn = True' ===============|
+|--------------------|-------------------|-----------------------------------------------------------------|
+| opt_VFE@           | a numeric value   | Height of data type labels, **have default                      |
+|DatatypelegendHeight|                   | == valid under 'opt_VFE@DatatypeLabelsOn = True' ===============|
+|--------------------|-------------------|-----------------------------------------------------------------|
+| plot_caselabels    | True / False      | Show caselabels on [True] or not [False: **dafault]?            |
+|--------------------|-------------------|-----------------------------------------------------------------| 
+| opt_VFE@caseLabels | a numeric value   | Font height of caselabels, **default: 0.013                     |
+|         FontHeightF|                   | == valid under 'plot_caselabels = True' ========================|
+|--------------------|-------------------|-----------------------------------------------------------------| 
+| opt_VFE@           | a numeric value   | Y interval between two cases in caselabels, **default: 0.06     |
+| caseLabelsYinterval|                   | == valid under 'plot_caselabels = True' ========================|
+|--------------------|-------------------|-----------------------------------------------------------------| 
+| opt_VFE@           | a numeric value   | X strat location of caselabels, **default: 0.125                |
+|      caseLabelsXloc|                   | == valid under 'plot_caselabels = True' ========================|
+|--------------------|-------------------|-----------------------------------------------------------------|
+| opt_VFE@           | a numeric value   | Y strat location of caselabels, **default: 0.3                  |
+|      caseLabelsYloc|                   | == valid under 'plot_caselabels = True' ========================|
+|==========================================================================================================|
+|===== Arguments for metrics table ========================================================================|  
+|===== valid under 'Plot_metrics_table = True', if not plotting, user can comment codes ===================|
+|==========================================================================================================|  
+| MVIE_filenames2    | a string / array  | Name of NetCDF file stored metrics for metrics table, when num  |
+|                    | of str (up to 4)  | of files greater than 1, each square in table will be divided   |
+|                    |                   | into triangles only with colors, without metrics values.        |     
+|--------------------|-------------------|-----------------------------------------------------------------| 
+| Var_names          | array of str      | Names for individual scalar or vector variables                 |
+|--------------------|-------------------|-----------------------------------------------------------------|
+| zoom               | a numeric value   | Width (height) of metrics table when 'opt_metrics@CaseLocation  |
+|                    |                   | = "Left" ("Top") ', **default: 0.95                               |
+|--------------------|-------------------|-----------------------------------------------------------------|
+| file_metrics       | s string          | Name of output metrics table, **default: "metrics_table"        |
+|--------------------|-------------------|-----------------------------------------------------------------| 
+| stats_metrics2     | array of str      | Statistics chosen for metrics table, **default: all vars in file|
+|--------------------|-------------------|-----------------------------------------------------------------|
+| opt_metrics        | True/False        | Use metrics table attributes [True] or not [False: **default]?  |
+|                    |                   | *** Below arguments are valid under 'opt_metrics = True' *******|
+|--------------------|-------------------|-----------------------------------------------------------------|
+| opt_metrics@pltType| a string          | Image storage format: "ps"/["eps": **default]/"pdf"/"png"       |
+|--------------------|-------------------|-----------------------------------------------------------------|
+| opt_metrics@       | "portrait"/       | PS or PDF output produced in ["portrait": default]/ "landscape" |
+|       wkOrientation| "landscape"       |                                                                 |
+|--------------------|-------------------|-----------------------------------------------------------------|
+| opt_metrics@RMSlevs| array of numeric  | RMS levels for SD/rms, cRMSL/RMSL, **default: (/0.6,0.65,0.70,  | 
+|                    | values            | 0.75,0.80,0.85,0.90,0.95,0.98,1.02,1.05,1.10,1.15,1.20,1.25,    |
+|                    |                   | 1.30, 1.35, 1.40/)                                              |
+|--------------------|-------------------|-----------------------------------------------------------------|
+| opt_metrics@MElevs | array of numeric  | ME levels for ME, VME/MEVM, **default: (/-0.5,-0.45,-0.40,-0.35,|
+|                    | values            | -0.3,-0.25,-0.20,-0.15,-0.10,-0.05,0.,0.05,0.10,0.15,0.20,0.25, |
+|                    |                   | 0.30,0.35,0.40,0.45,0.5/)                                       |    
+|--------------------|-------------------|-----------------------------------------------------------------|
+| opt_metrics@       | array of numeric  | RMSD levels for cRMSD/RMSD, cRMSVD/RMSVD, SD_std/rms_std,       |
+|            RMSDlevs| values            | **default: (/0.10,0.15,0.20,0.25,0.30,0.35,0.40,0.45,0.5/)      |
+|--------------------|-------------------|-----------------------------------------------------------------|
+| opt_metrics@       | array of numeric  | CORR levels for CORR/uCORR,cVSC/VSC,cMISS,MISS, **default:(/0.6,| 
+|            CORRlevs| values            | 0.7,0.8,0.84,0.86,0.88,0.90,0.91,0.92,0.93,0.94,0.95,0.96,0.98/)|
+|--------------------|-------------------|-----------------------------------------------------------------|
+| opt_metrics@RMScmap| a str / array of  | Colormap for RMS levels, **have default                         |
+|                    | str / array of    | == valid under setting 'RMSlevs' ===============================|
+|                    | numeric values    |                                                                 |
+|--------------------|-------------------|-----------------------------------------------------------------|
+| opt_metrics@MEcmap | a str / array of  | Colormap for ME levels, **have default                          |
+|                    | str / array of    | == valid under setting 'MElevs' ================================|
+|                    | numeric values    |                                                                 |  
+|--------------------|-------------------|-----------------------------------------------------------------|
+| opt_metrics@       | a str / array of  | Colormap for RMSD levels, **have default                        |
+|            RMSDcmap| str / array of    | == valid under setting 'RMSDlevs' ==============================|
+|                    | numeric values    |                                                                 | 
+|--------------------|-------------------|-----------------------------------------------------------------|
+| opt_metrics@       | a str / array of  | Colormap for CORR levels, **have default                        |
+|            CORRcmap| str / array of    | == valid under setting 'CORRlevs' ==============================|
+|                    | numeric values    |                                                                 | 
+|--------------------|-------------------|-----------------------------------------------------------------| 
+| opt_metrics@       | "Top"/"Left"      | Location of case-labels, **default: "Top"                       |
+|        CaseLocation|                   | Case-labels in the Top (Left) with stat-labels in the Left (Top)|                                                               | 
+|--------------------|-------------------|-----------------------------------------------------------------|
+| opt_metrics@       | a numeric value   | Height of title box, **default: 0.08                            |
+|         titleHeight|                   | == valid under 'opt_metrics@CaseLocation = "Left" '=============|
+|--------------------|-------------------|-----------------------------------------------------------------| 
+| opt_metrics@       | a numeric value   | Width of title box, **default: 0.1                              |
+|          titleWidth|                   | == valid under 'opt_metrics@CaseLocation = "Left" '=============|
+|--------------------|-------------------|-----------------------------------------------------------------|
+| opt_metrics@       | a numeric value   | Height of var box, **default: 0.035                             |
+|          caseHeight|                   | == valid under 'opt_metrics@CaseLocation = "Left" '=============| 
+|--------------------|-------------------|-----------------------------------------------------------------| 
+| opt_metrics@       | a numeric value   | Height of case box, **default: 0.07                             |
+|            varWidth|                   | == valid under 'opt_metrics@CaseLocation = "Top" '==============|
+|--------------------|-------------------|-----------------------------------------------------------------| 
+| opt_metrics@       | a numeric value   | Width of case box, **default: 0.1                               |
+|           caseWidth|                   | == valid under 'opt_metrics@CaseLocation = "Top" '==============|
+|--------------------|-------------------|-----------------------------------------------------------------|
+| opt_metrics@       | a numeric value   | Height of case box, **default: 0.02                             |                          |
+|          caseHeight|                   | == valid under 'opt_metrics@CaseLocation = "Top" ' =============|
+|--------------------|-------------------|-----------------------------------------------------------------|
+| opt_metrics@       | a numeric value   | Text font height of title, **default: 0.015                     |        
+|        titleTHeight|                   |                                                                 |
+|--------------------|-------------------|-----------------------------------------------------------------|
+| opt_metrics@       | a numeric value   | Text font height of case, **default: 0.0075                     |
+|         caseTHeight|                   |                                                                 |
+|--------------------|-------------------|-----------------------------------------------------------------|
+| opt_metrics@       | a numeric value   | Text font height of statistics, **default: 0.0075               |
+|        statsTHeight|                   |                                                                 | 
+|--------------------|-------------------|-----------------------------------------------------------------|
+| opt_metrics@       | a numeric value   | Text font height of statistics, **default: 0.0075               |
+|          varTHeight|                   |                                                                 |
+|--------------------|-------------------|-----------------------------------------------------------------|
+| opt_metrics@       | a numeric value   | Text font height of metrics, **default: 0.006                   |
+|      metricsTHeight|                   |                                                                 | 
+|--------------------|-------------------|-----------------------------------------------------------------|
+| opt_metrics@       | a string          | Background color for title, **default: "CornflowerBlue"         |
+|TitleBackgroundcolor|                   |                                                                 |
+|--------------------|-------------------|-----------------------------------------------------------------| 
+| opt_metrics@       | a string          | Background color for case/ststs/var, **default: "Gray70"        |
+|  VarBackgroundcolor|                   |                                                                 |
+|--------------------|-------------------|-----------------------------------------------------------------|
+| opt_metrics@       | a string          | Title of table, **default: "METRICS"                            |
+|          tableTitle|                   |                                                                 |
+|--------------------|-------------------|-----------------------------------------------------------------|
+| opt_metrics@       | True/False        | Show performance metrics on [True: **default] or not [False]?   |
+|          showTextOn|                   |                                                                 |
+|--------------------|-------------------|-----------------------------------------------------------------| 
+| opt_metrics@       | True/False        | Plot MEVD when ME is plotted and MEVD is in files [True] or not |
+|            plotMEVD|                   | [False: **default]?                                             |
+|--------------------|-------------------|-----------------------------------------------------------------|
+| opt_metrics@       | a string          | Number of decimal places for performance metrics,**default:"3.2"|
+|      decialMetricsN|                   |                                                                 |
+|--------------------|-------------------|-----------------------------------------------------------------|
+| opt_metrics@       | a string          | Number of decimal places for colorbar marker, **default:"3.2"   |
+|          decialBarN|                   |                                                                 |
+|--------------------|-------------------|-----------------------------------------------------------------|
+| opt_metrics@       | a numeric value   | Colorbar font height, **default:1.65*opt_metrics@varTHeight     | 
+|     colorbarFHeight|                   | == valid under 'showTextOn = False' ============================|
+|--------------------|-------------------|-----------------------------------------------------------------| 
+| opt_metrics@       | array of str      | Draw legend for box [array of str for legend] or not [False:    |           |
+|          box_legend|                   | **default\? When set array of str, num of it should match num of|
+|                    |                   | files in 'MVIE_filenames2'.                                     |
+|                    |                   | == valid under 'showTextOn = False' ============================|
+|--------------------|-------------------|-----------------------------------------------------------------|
+| opt_metrics@       | a numeric value   | Text font height in box legend, **have default                  |
+|   box_lgFontHeightF|                   | == valid under setting 'box_legend' ============================|
+|--------------------|-------------------|-----------------------------------------------------------------| 
+| opt_metrics@       | a numeric value   | Height of box legend, **have default                            |
+|        box_lgheight|                   | == valid under setting 'box_legend' ============================|
+|--------------------|-------------------|-----------------------------------------------------------------|
+| opt_metrics@       | True / False      | Enclose stats for summary, i.e.,cMISS,uMISS, with red box for   |
+|    highlightsummary|                   | emphasis [True: **default] or not [False]?                      |
+|--------------------|-------------------|-----------------------------------------------------------------| 
+
+Three ways for setting colormap:
+[1] cmap can be a string of colorfile
+[2] cmap can be an array of string with named colors and num between two colors, and has format as 
+    (/'color-1','N-1','color-2','N-2',...'color-(K-1)','N-(K-1)','color-K'/), where sum(N)-K should
+    be equal or greater than the num of levs.
+[3] cmap can be an N x 3 (N x 4) RGB (RGBA) array of numeric values, where N is equal or greater than the
+    num of levs. 
